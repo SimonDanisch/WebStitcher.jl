@@ -1,8 +1,3 @@
-
-# module names should be written in camel case (every first letter of a word should be uppercase)
-# this will isolate this code
-module Photostitching
-
 using Interpolations, Colors
 
 type ImageStitcher
@@ -264,7 +259,7 @@ end
 function overlayImage(Is, It, x, y)
     # Overlay image
     If = fillImage(It, x, y)
-    mask = .~(any(isnan.(If), 3))
+    mask = (.~)(any(isnan.(If), 3))
     Isj = Is[:, :]
     Ifj = If[:, :]
     Isj[mask] = Ifj[mask]
@@ -321,13 +316,3 @@ function fillBackground(Is, b0)
     # alpha = zeros(N0f8, size(mask))
     # alpha[~mask] = 1.0
 end
-
-# include GLVisualize point picking UI
-# include("getcorrespondences.jl")
-export getcorrespondences
-
-end
-
-# using the above module and making the exported functions available
-# The dot will search for the module in the current scope, as opposed to global scope
-using .Photostitching

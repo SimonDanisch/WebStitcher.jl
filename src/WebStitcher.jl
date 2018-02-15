@@ -74,7 +74,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
     newh = round(Int, scaling * imh)
 
     image_base64 = sprint() do io
-        show(Base64EncodePipe(io), MIME"image/png"(), restrict(image))
+        show(Base64EncodePipe(io), MIME"image/png"(), image)
     end;
 
     obs = Observable(w, "obs$id", string("data:image/png;base64,", image_base64))
