@@ -1,8 +1,8 @@
 module WebStitcher
 
-using WebPlayer, WebIO, FileIO, Images
+using WebIO, FileIO, Images
 using Base.Test, Colors
-using CSSUtil
+using CSSUtil, JSExpr
 
 # include("projective_transform.jl")
 include("Photostitching.jl")
@@ -55,13 +55,13 @@ function to_pix_coords(scaling, xy...)
     Float64[xy[j][i]/scaling for i = 1:N, j = 1:2]
 end
 
-const mouse_x = WebIO.@js function (canvas, e)
+const mouse_x = @js function (canvas, e)
     @var rect = canvas.getBoundingClientRect();
     @var scaleX = canvas.width / rect.width #relationship bitmap vs. element for X
     return (e.clientX - rect.left) * scaleX
 end
 
-const mouse_y = WebIO.@js function (canvas, e)
+const mouse_y = @js function (canvas, e)
     @var rect = canvas.getBoundingClientRect();
     @var scaleY = canvas.height / rect.height
     return (e.clientY - rect.top) * scaleY
@@ -85,7 +85,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
     is_active = Observable(w, "is_active$id", active, sync = true)
 
 
-    ondependencies(w, WebIO.@js function ()
+    onimport(w, @js function ()
 
         @var el = this.dom.querySelector($("#$id"))
         @var ctx = el.getContext("2d")
@@ -107,7 +107,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
 
     end)
 
-    add_click = WebIO.@js function add_click(e, context)
+    add_click = @js function add_click(e, context)
 
         @var el = context.dom.querySelector($("#$id"))
         @var ctx = el.getContext("2d")
@@ -129,7 +129,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
         end
     end
 
-    on_mouse = WebIO.@js function on_mouse(e, context)
+    on_mouse = @js function on_mouse(e, context)
         @var el = context.dom.querySelector($("#$id"))
         @var ctx = el.getContext("2d")
         @var canvas = ctx.canvas;
@@ -142,7 +142,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
     end
 
 
-    onjs(is_active, WebIO.@js function (val)
+    onjs(is_active, @js function (val)
         @var div = this.dom.querySelector($("#selection"*id))
         @var el = this.dom.querySelector($("#$id"))
         @var ctx = el.getContext("2d")
@@ -162,7 +162,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
         end
 
     end)
-    onjs(isdone, WebIO.@js function (val)
+    onjs(isdone, @js function (val)
         @var div = this.dom.querySelector($("#selection"*id))
         if val
             div.textContent = "DONE!"
@@ -207,16 +207,16 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
 end
 
 function getcorrespondences(img1, img2, n; width = 700)
-    w = Widget()
+    w = Scope()
     isdone = Observable(w, "isdone", false);
     w1, points1, is_active1 = pointpicker(img1, "test1", true, isdone, w, width = width);
     w2, points2, is_active2 = pointpicker(img2, "test2", false, isdone, w, width = width);
-    WebIO.onjs(is_active1, WebIO.@js function (val)
+    WebIO.onjs(is_active1, @js function (val)
         if !val
             $is_active2[] = true
         end
     end)
-    WebIO.onjs(is_active2, WebIO.@js function (val)
+    WebIO.onjs(is_active2, @js function (val)
         if !val
             $is_active1[] = true
         end

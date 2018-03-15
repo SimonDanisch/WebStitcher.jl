@@ -2,11 +2,12 @@ using WebStitcher, FileIO
 n = 5 # correspondencs (>= 4)
 # Else open a GUI to let you choose correspondences
 
-im1 = load(joinpath(@__DIR__, "law1.jpg"))
-im2 = load(joinpath(@__DIR__, "law2.jpg"))
-(XY1, XY2), plot = WebStitcher.getcorrespondences(im1, im2, n)
+im1 = load(Pkg.dir("WebStitcher", "test", "law1.jpg"));
+im2 = load(Pkg.dir("WebStitcher", "test", "law2.jpg"));
+(XY1, XY2), plot = WebStitcher.getcorrespondences(im1, im2, n);
 #save(pointsPath, "XY1", "XY2")
-plot # need to display this in a cell
+w = Blink.Window()
+Blink.body!(w, plot) # need to display this in a cell
 
 include("projective_transform.jl")
 H21 = projective_transform(XY2[], XY1[]) # 2 --> 1
