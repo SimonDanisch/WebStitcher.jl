@@ -1,7 +1,7 @@
 module WebStitcher
 
-using WebPlayer, WebIO, FileIO, Images
-using Base.Test, Colors
+using WebIO, FileIO, Images
+using Colors
 using CSSUtil
 
 # include("projective_transform.jl")
