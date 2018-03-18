@@ -123,7 +123,7 @@ function pointpicker(image, id, active, isdone, w; width = 200, num_points = 5)
             $y_obs[] = ctx.yy.concat([])
             window.redraw(ctx, false, 0.0, 0.0)
             $is_active[] = false
-            if !$active && ctx.xx.length > $num_points # last image
+            if !$active && ctx.xx.length >= $num_points # last image
                 $isdone[] = true
             end
         end
@@ -209,8 +209,8 @@ end
 function getcorrespondences(img1, img2, n; width = 700)
     w = Widget()
     isdone = Observable(w, "isdone", false);
-    w1, points1, is_active1 = pointpicker(img1, "test1", true, isdone, w, width = width);
-    w2, points2, is_active2 = pointpicker(img2, "test2", false, isdone, w, width = width);
+    w1, points1, is_active1 = pointpicker(img1, "test1", true, isdone, w, width = width, num_points = n);
+    w2, points2, is_active2 = pointpicker(img2, "test2", false, isdone, w, width = width, num_points = n);
     WebIO.onjs(is_active1, WebIO.@js function (val)
         if !val
             $is_active2[] = true
