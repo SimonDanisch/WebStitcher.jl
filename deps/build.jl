@@ -2,13 +2,14 @@
 # very simple implementation for isinstalled which should be enough for our purposes
 isinstalled(pkg) = isdir(Pkg.dir(pkg))
 
-installgizmo(pkg) = isinstalled(pkg) || Pkg.clone("https://github.com/JuliaGizmos/$(pkg).jl")
-
-installgizmo("WebIO")
+function installgizmo(pkg)
+    isinstalled(pkg) || Pkg.clone("https://github.com/JuliaGizmos/$(pkg).jl")
+end
+installgizmo("WebIO"); Pkg.checkout("WebIO", "legacy")
 Pkg.checkout("Observables")
-installgizmo("Vue")
+installgizmo("Vue");Pkg.checkout("Vue", "legacy")
 installgizmo("CSSUtil")
-installgizmo("InteractNext")
+installgizmo("InteractNext");Pkg.checkout("InteractNext", "legacy")
 isinstalled("Measures") || Pkg.clone("https://github.com/JuliaGraphics/Measures.jl")
 asset_dir = Pkg.dir("WebStitcher", "assets")
 wio_asset_dir = Pkg.dir("WebIO", "assets")
